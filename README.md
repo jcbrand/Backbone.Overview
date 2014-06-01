@@ -1,7 +1,7 @@
 Backbone.Overview
 =================
 
-An Overview is a View that references and keeps track of sub-views.
+An Overview is a View that references and keeps track of sub-views (i.e. just normal Backbone.Views)
 Kind of like what a Collection is to a Model.
 
 An Overview provides methods for handling the views it keeps track of:

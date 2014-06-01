@@ -33,10 +33,7 @@
                 delete views[id];
             }
         };
-        // List of view options to be merged as properties.
-        var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
-        _.extend(this, _.pick(options, viewOptions));
-        Backbone.View.apply(this, options);
+        Backbone.View.apply(this, Array.prototype.slice.apply(arguments));
     };
     _.extend(Overview.prototype, Backbone.View.prototype);
     Overview.extend = Backbone.View.extend;

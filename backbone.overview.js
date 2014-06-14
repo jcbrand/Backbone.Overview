@@ -24,13 +24,16 @@
          * Kind of like what a Collection is to a Model.
          */
         var views = {};
+        this.keys = function () { return _.keys(views) };
         this.getAll = function () { return views; };
         this.get = function (id) { return views[id]; };
         this.add = function (id, view) { views[id] = view; };
         this.remove = function (id) {
-            if (views[id]) {
-                view[id].remove();
+            var view = views[id];
+            if (view) {
                 delete views[id];
+                view.remove();
+                return view;
             }
         };
         Backbone.View.apply(this, Array.prototype.slice.apply(arguments));

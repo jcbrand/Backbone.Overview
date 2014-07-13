@@ -27,7 +27,10 @@
         this.keys = function () { return _.keys(views) };
         this.getAll = function () { return views; };
         this.get = function (id) { return views[id]; };
-        this.add = function (id, view) { views[id] = view; };
+        this.add = function (id, view) {
+            views[id] = view;
+            return view;
+        };
         this.remove = function (id) {
             var view = views[id];
             if (view) {

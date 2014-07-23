@@ -39,6 +39,10 @@
                 return view;
             }
         };
+        this.removeAll = function (id) {
+            _.each(_.keys(views), this.remove);
+        };
+
         Backbone.View.apply(this, Array.prototype.slice.apply(arguments));
     };
     _.extend(Overview.prototype, Backbone.View.prototype);

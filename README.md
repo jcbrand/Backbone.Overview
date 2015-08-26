@@ -9,7 +9,9 @@ An Overview provides methods for handling the views it keeps track of:
   * add(id, view)
   * get(id)
   * getAll()
+  * keys()
   * remove(id)
+  * removeAll()
 
 ## Usage
 
@@ -25,6 +27,22 @@ Create your overview like this:
 ```javascript
     this.RosterView = Backbone.Overview.extend({
     // ... same customizations as you would make for a normal Backbone.View
+    });
+```
+
+### Underscore
+
+You can use the usual underscore methdods, like you can with Backbone
+Collections.
+
+For example:
+
+```javascript
+    this.rosterview = new this.RosterView();
+    this.rosterview.add(new Backbone.View({model: new Backbone.Model()));
+
+    this.rosterview.each(function (view) {
+        // Do something
     });
 ```
 

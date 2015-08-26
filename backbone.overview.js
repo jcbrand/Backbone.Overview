@@ -4,18 +4,13 @@
  * Copyright (c) 2014, JC Brand <jc@opkode.com>
  * Licensed under the Mozilla Public License (MPL) 
  */
-
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["underscore", "backbone"],
-            function(_, Backbone) {
-                return factory(_ || root._, Backbone || root.Backbone);
-            }
-        );
+        define(["underscore", "backbone"], factory);
    } else {
       // RequireJS isn't being used.
       // Assume underscore and backbone are loaded in <script> tags
-      factory(_, Backbone);
+        factory(_ || root._, Backbone || root.Backbone);
    }
 }(this, function (_, Backbone) {
     "use strict";

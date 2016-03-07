@@ -1,6 +1,6 @@
 {
   "name": "Backbone.Overview",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": " An Overview is a View that contains and keeps track of sub-views. Kind of like what a Collection is to a Model.",
   "main": "backbone.overview.js",
   "scripts": {

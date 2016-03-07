@@ -21,11 +21,23 @@
         this.views = {};
         this.keys = _.partial(_.keys, this.views);
         this.getAll = _.partial(_.identity, this.views);
-        this.get = function (id) { return this.views[id]; }.bind(this);
+
+        this.get = function (id) {
+            return this.views[id];
+        }.bind(this);
+
+        this.xget = function (id) {
+            /* Exclusive get. Returns all instances except the given id. */
+            return _.filter(this.views, function (view, vid) {
+                return vid !== id;
+            });
+        }.bind(this);
+
         this.add = function (id, view) {
             this.views[id] = view;
             return view;
         }.bind(this);
+
         this.remove = function (id) {
             if (typeof id === "undefined") {
                 new Backbone.View().remove.apply(this);
@@ -37,6 +49,7 @@
                 return view;
             }
         }.bind(this);
+
         this.removeAll = function () {
             _.each(_.keys(this.views), this.remove);
         }.bind(this);

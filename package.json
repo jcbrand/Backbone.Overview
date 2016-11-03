@@ -20,7 +20,10 @@
     "url": "https://github.com/jcbrand/Backbone.Overview/issues"
   },
   "homepage": "https://github.com/jcbrand/Backbone.Overview",
+  "devDependencies": {
+    "greenkeeper": "^4.0.0"
+  },
   "dependencies": {
-    "bower": "^1.5.2"
+    "backbone": "~1.2.2"
   }
 }

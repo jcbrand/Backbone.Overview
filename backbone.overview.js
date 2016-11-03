@@ -18,50 +18,56 @@
         /* An Overview is a View that contains and keeps track of sub-views.
          * Kind of like what a Collection is to a Model.
          */
+        var that = this;
         this.views = {};
         this.keys = _.partial(_.keys, this.views);
         this.getAll = _.partial(_.identity, this.views);
 
         this.get = function (id) {
-            return this.views[id];
-        }.bind(this);
+            return that.views[id];
+        };
 
         this.xget = function (id) {
             /* Exclusive get. Returns all instances except the given id. */
-            return _.filter(this.views, function (view, vid) {
+            return _.filter(that.views, function (view, vid) {
                 return vid !== id;
             });
-        }.bind(this);
+        };
 
         this.add = function (id, view) {
-            this.views[id] = view;
+            that.views[id] = view;
             return view;
-        }.bind(this);
+        };
 
         this.remove = function (id) {
             if (typeof id === "undefined") {
-                new Backbone.View().remove.apply(this);
+                new Backbone.View().remove.apply(that);
             }
-            var view = this.views[id];
+            var view = that.views[id];
             if (view) {
-                delete this.views[id];
+                delete that.views[id];
                 view.remove();
                 return view;
             }
-        }.bind(this);
+        };
 
         this.removeAll = function () {
-            _.each(_.keys(this.views), this.remove);
-        }.bind(this);
+            _.each(_.keys(that.views), that.remove);
+            return that;
+        };
         Backbone.View.apply(this, Array.prototype.slice.apply(arguments));
     };
 
-    var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
-        'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
-        'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
-        'max', 'min', 'toArray', 'size', 'first', 'head', 'take', 'initial', 'rest',
-        'tail', 'drop', 'last', 'without', 'difference', 'indexOf', 'shuffle',
-        'lastIndexOf', 'isEmpty', 'chain', 'sample'];
+    var methods = [
+        'all', 'any', 'chain', 'collect', 'contains', 'detect',
+        'difference', 'drop', 'each', 'every', 'filter', 'find',
+        'first', 'foldl', 'foldr', 'forEach', 'head', 'include',
+        'indexOf', 'initial', 'inject', 'invoke', 'isEmpty',
+        'last', 'lastIndexOf', 'map', 'max', 'min', 'reduce',
+        'reduceRight', 'reject', 'rest', 'sample', 'select',
+        'shuffle', 'size', 'some', 'sortBy', 'tail', 'take',
+        'toArray', 'without',
+    ];
     // Mix in each Underscore method as a proxy to `Overview#view`.
     _.each(methods, function(method) {
         Overview.prototype[method] = function() {

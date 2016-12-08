@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/jcbrand/Backbone.Overview",
   "devDependencies": {
-    "greenkeeper": "^4.0.0"
+    "greenkeeper": "^4.1.2"
   },
   "dependencies": {
     "backbone": "~1.2.2"

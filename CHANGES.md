@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.0.0 (Unreleased)
+------------------
+
+* Add `Backbone.OrderedListView` [jcbrand]
+
 0.0.3 (2016-11-03)
 ------------------
 

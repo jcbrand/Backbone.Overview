@@ -56,42 +56,22 @@
         },
 
         sortAndPositionAllItems () {
-            this.items.sort();
-            this.items.each((item) => {
-                if (_.isUndefined(this.get(item.get('id')))) {
-                    this.createItemView(item)
-                }
-                this.positionItem(item, this.el.querySelector(this.listSelector));
-            });
-        },
-
-        positionItem (item, list_el) {
-            /* Place the View's DOM element in the correct alphabetical
-             * position in the list.
-             *
-             * IMPORTANT: there's an important implicit assumption being
-             * made here. And that is that initially this method gets called
-             * for each item in the right positional order.
-             *
-             * In other words, it gets called for the 0th, then the
-             * 1st, then the 2nd, 3rd and so on.
-             *
-             * That's why we call it in the "success" handler after
-             * fetching the items, so that we know we have ALL of
-             * them and that they're sorted.
-             */
-            const view = this.get(item.get('id')),
-                index = this.items.indexOf(item);
-
-            if (index === 0) {
-                list_el.insertAdjacentElement('afterbegin', view.el);
-            } else if (index === (this.items.length-1)) {
-                list_el.insertAdjacentElement('beforeend', view.el);
-            } else {
-                const neighbour_el = list_el.querySelector('li:nth-child('+index+')');
-                neighbour_el.insertAdjacentElement('afterend', view.el);
+            if (!this.items.length) {
+                return;
             }
-            return view;
+            this.items.sort();
+
+            const list_el = this.el.querySelector(this.listSelector);
+            const div = document.createElement('div');
+            list_el.replaceWith(div);
+            this.items.each((item) => {
+                let view = this.get(item.get('id'));
+                if (_.isUndefined(view)) {
+                    view = this.createItemView(item)
+                }
+                list_el.insertAdjacentElement('beforeend', view.el);
+            });
+            div.replaceWith(list_el);
         }
     });
 

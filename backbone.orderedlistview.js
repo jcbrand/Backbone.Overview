@@ -32,6 +32,12 @@
         // The `itemView` is constructor which should be called to create a
         // View for a new item.
         ItemView: undefined,
+        // The `subviewIndex` is the attribute of the list element model which
+        // acts as the index of the subview in the overview.
+        // An overview is a "Collection" of views, and they can be retrieved
+        // via an index. By default this is the 'id' attribute, but it could be
+        // set to something else.
+        subviewIndex: 'id',
 
         initialize () {
             this.sortEventually = _.debounce(
@@ -39,14 +45,16 @@
 
             this.items = _.get(this, this.listItems);
             this.items.on('add', this.sortAndPositionAllItems, this);
-            this.items.on(this.sortEvent, this.sortEventually, this);
+            if (!_.isNil(this.sortEvent)) {
+                this.items.on(this.sortEvent, this.sortEventually, this);
+            }
         },
 
         createItemView (item) {
-            let item_view = this.get(item.get('id'));
+            let item_view = this.get(item.get(this.subviewIndex));
             if (!item_view) {
                 item_view = new this.ItemView({model: item});
-                this.add(item.get('id'), item_view);
+                this.add(item.get(this.subviewIndex), item_view);
             } else {
                 item_view.model = item;
                 item_view.initialize();
@@ -65,7 +73,7 @@
             const div = document.createElement('div');
             list_el.replaceWith(div);
             this.items.each((item) => {
-                let view = this.get(item.get('id'));
+                let view = this.get(item.get(this.subviewIndex));
                 if (_.isUndefined(view)) {
                     view = this.createItemView(item)
                 }

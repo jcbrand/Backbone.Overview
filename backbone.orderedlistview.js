@@ -35,12 +35,10 @@
 
         initialize () {
             this.sortEventually = _.debounce(
-                this.sortAndPositionAllItems.bind(this),
-                500
-            );
+                this.sortAndPositionAllItems.bind(this), 500);
+
             this.items = _.get(this, this.listItems);
-            this.items.on('add', this.createItemView, this);
-            this.items.on('add', this.sortEventually, this);
+            this.items.on('add', this.sortAndPositionAllItems, this);
             this.items.on(this.sortEvent, this.sortEventually, this);
         },
 
@@ -56,7 +54,6 @@
             item_view.render();
             return item_view;
         },
-
 
         sortAndPositionAllItems () {
             this.items.sort();

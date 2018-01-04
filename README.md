@@ -114,6 +114,15 @@ RequireJS config:
         });
     });
 ```
+
+### Using Backbone.Overview without jQuery
+
+Backbone can be used without jQuery by using
+[Backbone.NativeView](https://github.com/akre54/Backbone.NativeView) instead of
+Backbone.View.
+
+If Backbone.NativeView is available, then the Overview and OrderedListView will use that instead of Backbone.View.
+
 ## Real-world example 
 
 Overviews and OrderedListViews are used in [converse.js](http://conversejs.org)

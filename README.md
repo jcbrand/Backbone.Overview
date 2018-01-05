@@ -63,6 +63,7 @@ Include Backbone.Overview after having included Backbone.js:
     <script type="text/javascript" src="backbone.overview.js"></script>
 ```
 
+### Creating an Overview
 Create your overview like this:
 
 ```javascript
@@ -71,7 +72,7 @@ Create your overview like this:
     });
 ```
 
-### Underscore
+#### Underscore
 
 You can use the usual underscore methdods, like you can with Backbone
 Collections.
@@ -84,6 +85,36 @@ For example:
 
     this.rosterview.each(function (view) {
         // Do something
+    });
+```
+
+### Creating an OrderedListView:
+
+
+```javascript
+    this.RosterView = Backbone.OrderedListView.extend({
+        // The `listItems` attribute denotes the path (from this View) to the
+        // list of items.
+        listItems: 'model',
+        // The `sortEvent` attribute specifies the event which should cause the
+        // ordered list to be sorted.
+        sortEvent: 'change',
+        // The `listSelector` is the selector used to query for the DOM list
+        // element which contains the ordered items.
+        listSelector: '.ordered-items',
+        // The `itemView` is constructor which should be called to create a
+        // View for a new item.
+        ItemView: undefined,
+        // The `subviewIndex` is the attribute of the list element model which
+        // acts as the index of the subview in the overview.
+        // An overview is a "Collection" of views, and they can be retrieved
+        // via an index. By default this is the 'id' attribute, but it could be
+        // set to something else.
+        subviewIndex: 'id',
+
+        initialize () {
+            Backbone.OrderedListView.prototype.initialize.apply(this, arguments);
+        }
     });
 ```
 

@@ -45,6 +45,7 @@
 
             this.items = _.get(this, this.listItems);
             this.items.on('add', this.sortAndPositionAllItems, this);
+            this.items.on('remove', this.removeView, this);
             if (!_.isNil(this.sortEvent)) {
                 this.items.on(this.sortEvent, this.sortEventually, this);
             }
@@ -61,6 +62,10 @@
             }
             item_view.render();
             return item_view;
+        },
+
+        removeView (item) {
+            this.remove(item.get(this.subviewIndex));
         },
 
         sortAndPositionAllItems () {

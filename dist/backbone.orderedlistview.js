@@ -41,6 +41,7 @@
       this.sortEventually = _.debounce(this.sortAndPositionAllItems.bind(this), 500);
       this.items = _.get(this, this.listItems);
       this.items.on('add', this.sortAndPositionAllItems, this);
+      this.items.on('remove', this.removeView, this);
 
       if (!_.isNil(this.sortEvent)) {
         this.items.on(this.sortEvent, this.sortEventually, this);
@@ -61,6 +62,9 @@
 
       item_view.render();
       return item_view;
+    },
+    removeView: function removeView(item) {
+      this.remove(item.get(this.subviewIndex));
     },
     sortAndPositionAllItems: function sortAndPositionAllItems() {
       var _this = this;

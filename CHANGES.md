@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.0.1 (Unreleased)
+------------------
+
+* `ChildNode.replaceWith` is not available in Internet Explorer or Safari. Use `Node.replaceChild` instead.
+
 1.0.0 (2018-01-15)
 ------------------
 

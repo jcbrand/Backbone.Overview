@@ -76,7 +76,7 @@
 
             const list_el = this.el.querySelector(this.listSelector);
             const div = document.createElement('div');
-            list_el.replaceWith(div);
+            list_el.parentNode.replaceChild(div, list_el);
             this.items.each((item) => {
                 let view = this.get(item.get(this.subviewIndex));
                 if (_.isUndefined(view)) {

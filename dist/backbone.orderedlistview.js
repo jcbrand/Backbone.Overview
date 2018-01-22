@@ -76,7 +76,7 @@
       this.items.sort();
       var list_el = this.el.querySelector(this.listSelector);
       var div = document.createElement('div');
-      list_el.replaceWith(div);
+      list_el.parentNode.replaceChild(div, list_el);
       this.items.each(function (item) {
         var view = _this.get(item.get(_this.subviewIndex));
 

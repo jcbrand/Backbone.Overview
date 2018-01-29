@@ -84,7 +84,7 @@
                 }
                 list_el.insertAdjacentElement('beforeend', view.el);
             });
-            div.replaceWith(list_el);
+            div.parentNode.replaceChild(list_el, div);
         }
     });
 

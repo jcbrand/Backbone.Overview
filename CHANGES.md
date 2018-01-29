@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.2 (Unrleased)
+1.0.2 (2018-01-29)
 ------------------
 
 * Found another `ChildNode.replaceWith`

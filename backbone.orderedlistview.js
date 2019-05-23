@@ -46,6 +46,7 @@
             this.items = _.get(this, this.listItems);
             this.items.on('add', this.sortAndPositionAllItems, this);
             this.items.on('remove', this.removeView, this);
+            this.items.on('reset', this.removeAll, this);
             if (!_.isNil(this.sortEvent)) {
                 this.items.on(this.sortEvent, this.sortEventually, this);
             }

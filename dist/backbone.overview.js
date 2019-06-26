@@ -1,162 +1,200 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Overview = exports.OrderedListView = void 0;
+
+var _lodash = require("lodash");
+
 /*!
- * Backbone.Overview 
+ * Backbone.Overview
  *
- * Copyright (c) 2018, JC Brand <jc@opkode.com>
- * Licensed under the Mozilla Public License (MPL) 
+ * Copyright (c) JC Brand <jc@opkode.com>
+ * Licensed under the Mozilla Public License (MPL)
  */
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(["underscore", "backbone"], factory);
-  } else {
-    // RequireJS isn't being used.
-    // Assume underscore and backbone are loaded in <script> tags
-    factory(_ || root._, Backbone || root.Backbone);
-  }
-})(this, function (_, Backbone) {
-  "use strict";
+var View = Backbone.NativeView === undefined ? Backbone.View : Backbone.NativeView;
 
-  var View = _.isUndefined(Backbone.NativeView) ? Backbone.View : Backbone.NativeView;
+var Overview = Backbone.Overview = function (options) {
+  var _this = this;
 
-  var Overview = Backbone.Overview = function (options) {
-    /* An Overview is a View that contains and keeps track of sub-views.
-     * Kind of like what a Collection is to a Model.
-     */
-    var that = this;
-    this.views = {};
-    this.keys = _.partial(_.keys, this.views);
-    this.getAll = _.partial(_.identity, this.views);
+  /* An Overview is a View that contains and keeps track of sub-views.
+  * Kind of like what a Collection is to a Model.
+  */
+  this.views = {};
 
-    this.get = function (id) {
-      return that.views[id];
-    };
-
-    this.xget = function (id) {
-      /* Exclusive get. Returns all instances except the given id. */
-      return _.filter(that.views, function (view, vid) {
-        return vid !== id;
-      });
-    };
-
-    this.add = function (id, view) {
-      that.views[id] = view;
-      return view;
-    };
-
-    this.remove = function (id) {
-      if (typeof id === "undefined") {
-        new View().remove.apply(that);
-      }
-
-      var view = that.views[id];
-
-      if (view) {
-        delete that.views[id];
-        view.remove();
-        return view;
-      }
-    };
-
-    this.removeAll = function () {
-      _.each(_.keys(that.views), that.remove);
-
-      return that;
-    };
-
-    View.apply(this, Array.prototype.slice.apply(arguments));
+  this.keys = function () {
+    return Object.keys(_this.views);
   };
 
-  var methods = ['all', 'any', 'chain', 'collect', 'contains', 'detect', 'difference', 'drop', 'each', 'every', 'filter', 'find', 'first', 'foldl', 'foldr', 'forEach', 'head', 'include', 'indexOf', 'initial', 'inject', 'invoke', 'isEmpty', 'last', 'lastIndexOf', 'map', 'max', 'min', 'reduce', 'reduceRight', 'reject', 'rest', 'sample', 'select', 'shuffle', 'size', 'some', 'sortBy', 'tail', 'take', 'toArray', 'without']; // Mix in each Underscore method as a proxy to `Overview#view`.
+  this.getAll = function () {
+    return _this.views;
+  };
 
-  _.each(methods, function (method) {
-    Overview.prototype[method] = function () {
-      var args = Array.prototype.slice.call(arguments);
-      args.unshift(this.views);
-      return _[method].apply(_, args);
-    };
-  });
+  this.get = function (id) {
+    return _this.views[id];
+  };
+  /* Exclusive get. Returns all instances except the given id. */
 
-  _.extend(Overview.prototype, View.prototype);
 
-  Overview.extend = View.extend;
-  Backbone.OrderedListView = Backbone.Overview.extend({
-    // The `listItems` attribute denotes the path (from this View) to the
-    // list of items.
-    listItems: 'model',
-    // The `sortEvent` attribute specifies the event which should cause the
-    // ordered list to be sorted.
-    sortEvent: 'change',
-    // The `listSelector` is the selector used to query for the DOM list
-    // element which contains the ordered items.
-    listSelector: '.ordered-items',
-    // The `itemView` is constructor which should be called to create a
-    // View for a new item.
-    ItemView: undefined,
-    initialize: function initialize() {
-      this.sortEventually = _.debounce(this.sortAndPositionAllItems.bind(this), 500);
-      this.items = _.get(this, this.listItems);
-      this.items.on('add', this.createItemView, this);
-      this.items.on('add', this.sortEventually, this);
-      this.items.on(this.sortEvent, this.sortEventually, this);
-    },
-    createItemView: function createItemView(item) {
-      var item_view = this.get(item.get('id'));
+  this.xget = function (id) {
+    return _this.keys().filter(function (k) {
+      return k !== id;
+    }).reduce(function (acc, k) {
+      acc[k] = _this.views[k];
+      return acc;
+    }, {});
+  };
 
-      if (!item_view) {
-        item_view = new this.ItemView({
-          model: item
-        });
-        this.add(item.get('id'), item_view);
-      } else {
-        item_view.model = item;
-        item_view.initialize();
-      }
+  this.add = function (id, view) {
+    _this.views[id] = view;
+    return view;
+  };
 
-      item_view.render();
-      return item_view;
-    },
-    sortAndPositionAllItems: function sortAndPositionAllItems() {
-      var _this = this;
+  this.remove = function (id) {
+    if (typeof id === "undefined") {
+      new View().remove.apply(_this);
+    }
 
-      this.items.sort();
-      this.items.each(function (item) {
-        if (_.isUndefined(_this.get(item.get('id')))) {
-          _this.createItemView(item);
-        }
+    var view = _this.views[id];
 
-        _this.positionItem(item, _this.el.querySelector(_this.listSelector));
-      });
-    },
-    positionItem: function positionItem(item, list_el) {
-      /* Place the View's DOM element in the correct alphabetical
-       * position in the list.
-       *
-       * IMPORTANT: there's an important implicit assumption being
-       * made here. And that is that initially this method gets called
-       * for each item in the right positional order.
-       *
-       * In other words, it gets called for the 0th, then the
-       * 1st, then the 2nd, 3rd and so on.
-       *
-       * That's why we call it in the "success" handler after
-       * fetching the items, so that we know we have ALL of
-       * them and that they're sorted.
-       */
-      var view = this.get(item.get('id')),
-          index = this.items.indexOf(item);
-
-      if (index === 0) {
-        list_el.insertAdjacentElement('afterbegin', view.el);
-      } else if (index === this.items.length - 1) {
-        list_el.insertAdjacentElement('beforeend', view.el);
-      } else {
-        var neighbour_el = list_el.querySelector('li:nth-child(' + index + ')');
-        neighbour_el.insertAdjacentElement('afterend', view.el);
-      }
-
+    if (view) {
+      delete _this.views[id];
+      view.remove();
       return view;
     }
-  });
-  return Backbone.Overview;
+  };
+
+  this.removeAll = function () {
+    _this.keys().forEach(function (id) {
+      return _this.remove(id);
+    });
+
+    return _this;
+  };
+
+  View.apply(this, Array.prototype.slice.apply(arguments));
+};
+
+exports.Overview = Overview;
+var methods = {
+  chain: _lodash.chain,
+  includes: _lodash.includes,
+  difference: _lodash.difference,
+  drop: _lodash.drop,
+  every: _lodash.every,
+  filter: _lodash.filter,
+  find: _lodash.find,
+  first: _lodash.first,
+  forEach: _lodash.forEach,
+  head: _lodash.head,
+  indexOf: _lodash.indexOf,
+  initial: _lodash.initial,
+  invoke: _lodash.invoke,
+  isEmpty: _lodash.isEmpty,
+  last: _lodash.last,
+  lastIndexOf: _lodash.lastIndexOf,
+  map: _lodash.map,
+  max: _lodash.max,
+  min: _lodash.min,
+  reduce: _lodash.reduce,
+  reduceRight: _lodash.reduceRight,
+  reject: _lodash.reject,
+  rest: _lodash.rest,
+  sample: _lodash.sample,
+  shuffle: _lodash.shuffle,
+  size: _lodash.size,
+  some: _lodash.some,
+  sortBy: _lodash.sortBy,
+  tail: _lodash.tail,
+  take: _lodash.take,
+  toArray: _lodash.toArray,
+  without: _lodash.without
+};
+Object.keys(methods).forEach(function (name) {
+  Overview.prototype[name] = function () {
+    var args = Array.prototype.slice.call(arguments);
+    args.unshift(this.views);
+    return methods[name].apply(this, args);
+  };
 });
+(0, _lodash.extend)(Overview.prototype, View.prototype);
+Overview.extend = View.extend;
+var OrderedListView = Backbone.OrderedListView = Backbone.Overview.extend({
+  /* An OrderedListView is a special type of Overview which adds some
+   * methods and conventions for rendering an ordered list of elements.
+   */
+  // The `listItems` attribute denotes the path (from this View) to the
+  // list of items.
+  listItems: 'model',
+  // The `sortEvent` attribute specifies the event which should cause the
+  // ordered list to be sorted.
+  sortEvent: 'change',
+  // The `listSelector` is the selector used to query for the DOM list
+  // element which contains the ordered items.
+  listSelector: '.ordered-items',
+  // The `itemView` is constructor which should be called to create a
+  // View for a new item.
+  ItemView: undefined,
+  // The `subviewIndex` is the attribute of the list element model which
+  // acts as the index of the subview in the overview.
+  // An overview is a "Collection" of views, and they can be retrieved
+  // via an index. By default this is the 'id' attribute, but it could be
+  // set to something else.
+  subviewIndex: 'id',
+  initialize: function initialize() {
+    this.sortEventually = (0, _lodash.debounce)(this.sortAndPositionAllItems.bind(this), 250);
+    this.items = (0, _lodash.get)(this, this.listItems);
+    this.items.on('add', this.sortEventually, this);
+    this.items.on('remove', this.removeView, this);
+    this.items.on('reset', this.removeAll, this);
+
+    if (this.sortEvent) {
+      this.items.on(this.sortEvent, this.sortEventually, this);
+    }
+  },
+  createItemView: function createItemView(item) {
+    var item_view = this.get(item.get(this.subviewIndex));
+
+    if (!item_view) {
+      item_view = new this.ItemView({
+        model: item
+      });
+      this.add(item.get(this.subviewIndex), item_view);
+    } else {
+      item_view.model = item;
+      item_view.initialize();
+    }
+
+    item_view.render();
+    return item_view;
+  },
+  removeView: function removeView(item) {
+    this.remove(item.get(this.subviewIndex));
+  },
+  sortAndPositionAllItems: function sortAndPositionAllItems() {
+    var _this2 = this;
+
+    if (!this.items.length) {
+      return;
+    }
+
+    this.items.sort();
+    var list_el = this.el.querySelector(this.listSelector);
+    var div = document.createElement('div');
+    list_el.parentNode.replaceChild(div, list_el);
+    this.items.forEach(function (item) {
+      var view = _this2.get(item.get(_this2.subviewIndex));
+
+      if (!view) {
+        view = _this2.createItemView(item);
+      }
+
+      list_el.insertAdjacentElement('beforeend', view.el);
+    });
+    div.parentNode.replaceChild(list_el, div);
+  }
+});
+exports.OrderedListView = OrderedListView;
 
 //# sourceMappingURL=backbone.overview.js.map

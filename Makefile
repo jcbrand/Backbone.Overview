@@ -13,4 +13,3 @@ stamp-npm: package.json
 .PHONY: dist
 dist: stamp-npm
 	$(BABEL) --source-maps --out-file=./dist/backbone.overview.js backbone.overview.js
-	$(BABEL) --source-maps --out-file=./dist/backbone.orderedlistview.js backbone.orderedlistview.js

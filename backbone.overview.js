@@ -118,11 +118,11 @@ const OrderedListView = Backbone.OrderedListView = Backbone.Overview.extend({
       this.sortEventually = debounce(this.sortAndPositionAllItems.bind(this), 250);
 
       this.items = get(this, this.listItems);
-      this.items.on('add', this.sortAndPositionAllItems, this);
+      this.items.on('add', this.sortEventually, this);
       this.items.on('remove', this.removeView, this);
       this.items.on('reset', this.removeAll, this);
       if (this.sortEvent) {
-            this.items.on(this.sortEvent, this.sortEventually, this);
+         this.items.on(this.sortEvent, this.sortEventually, this);
       }
    },
 

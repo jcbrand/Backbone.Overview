@@ -5,6 +5,7 @@ Changelog
 ------------------
 
 * Remove all views on `reset` event
+* Debounce `sortAndPositionAllItems` on `add` event
 
 1.0.2 (2018-01-29)
 ------------------

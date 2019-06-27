@@ -115,8 +115,7 @@ const OrderedListView = Backbone.OrderedListView = Backbone.Overview.extend({
    subviewIndex: 'id',
 
    initialize () {
-      this.sortEventually = debounce(this.sortAndPositionAllItems.bind(this), 250);
-
+      this.sortEventually = debounce(() => this.sortAndPositionAllItems(), 200);
       this.items = get(this, this.listItems);
       this.items.on('add', this.sortEventually, this);
       this.items.on('remove', this.removeView, this);

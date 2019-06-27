@@ -101,6 +101,10 @@ const OrderedListView = Backbone.OrderedListView = Backbone.Overview.extend({
    // The `sortEvent` attribute specifies the event which should cause the
    // ordered list to be sorted.
    sortEvent: 'change',
+   // If false, we debounce sorting and inserting the new item
+   // (for improved performance when a large amount of items get added all at once)
+   // Otherwise we immediately sort the items and insert the new item.
+   sortImmediatelyOnAdd: false,
    // The `listSelector` is the selector used to query for the DOM list
    // element which contains the ordered items.
    listSelector: '.ordered-items',
@@ -115,11 +119,19 @@ const OrderedListView = Backbone.OrderedListView = Backbone.Overview.extend({
    subviewIndex: 'id',
 
    initialize () {
-      this.sortEventually = debounce(() => this.sortAndPositionAllItems(), 200);
+      this.sortEventually = debounce(() => this.sortAndPositionAllItems(), 100);
       this.items = get(this, this.listItems);
-      this.items.on('add', this.sortEventually, this);
       this.items.on('remove', this.removeView, this);
       this.items.on('reset', this.removeAll, this);
+
+      this.items.on('add', (a, b) => {
+         if (this.sortImmediatelyOnAdd) {
+            this.sortAndPositionAllItems();
+         } else {
+            this.sortEventually();
+         }
+      });
+
       if (this.sortEvent) {
          this.items.on(this.sortEvent, this.sortEventually, this);
       }

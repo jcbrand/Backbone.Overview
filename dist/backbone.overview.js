@@ -130,6 +130,10 @@ var OrderedListView = Backbone.OrderedListView = Backbone.Overview.extend({
   // The `sortEvent` attribute specifies the event which should cause the
   // ordered list to be sorted.
   sortEvent: 'change',
+  // If false, we debounce sorting and inserting the new item
+  // (for improved performance when a large amount of items get added all at once)
+  // Otherwise we immediately sort the items and insert the new item.
+  sortImmediatelyOnAdd: false,
   // The `listSelector` is the selector used to query for the DOM list
   // element which contains the ordered items.
   listSelector: '.ordered-items',
@@ -143,11 +147,21 @@ var OrderedListView = Backbone.OrderedListView = Backbone.Overview.extend({
   // set to something else.
   subviewIndex: 'id',
   initialize: function initialize() {
-    this.sortEventually = (0, _lodash.debounce)(this.sortAndPositionAllItems.bind(this), 250);
+    var _this2 = this;
+
+    this.sortEventually = (0, _lodash.debounce)(function () {
+      return _this2.sortAndPositionAllItems();
+    }, 100);
     this.items = (0, _lodash.get)(this, this.listItems);
-    this.items.on('add', this.sortEventually, this);
     this.items.on('remove', this.removeView, this);
     this.items.on('reset', this.removeAll, this);
+    this.items.on('add', function (a, b) {
+      if (_this2.sortImmediatelyOnAdd) {
+        _this2.sortAndPositionAllItems();
+      } else {
+        _this2.sortEventually();
+      }
+    });
 
     if (this.sortEvent) {
       this.items.on(this.sortEvent, this.sortEventually, this);
@@ -173,7 +187,7 @@ var OrderedListView = Backbone.OrderedListView = Backbone.Overview.extend({
     this.remove(item.get(this.subviewIndex));
   },
   sortAndPositionAllItems: function sortAndPositionAllItems() {
-    var _this2 = this;
+    var _this3 = this;
 
     if (!this.items.length) {
       return;
@@ -184,10 +198,10 @@ var OrderedListView = Backbone.OrderedListView = Backbone.Overview.extend({
     var div = document.createElement('div');
     list_el.parentNode.replaceChild(div, list_el);
     this.items.forEach(function (item) {
-      var view = _this2.get(item.get(_this2.subviewIndex));
+      var view = _this3.get(item.get(_this3.subviewIndex));
 
       if (!view) {
-        view = _this2.createItemView(item);
+        view = _this3.createItemView(item);
       }
 
       list_el.insertAdjacentElement('beforeend', view.el);

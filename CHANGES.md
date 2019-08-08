@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.3 (Unreleased)
+1.0.3 (2019-08-08)
 ------------------
 
 * Remove all views on `reset` event
